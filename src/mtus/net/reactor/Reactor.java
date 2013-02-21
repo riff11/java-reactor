@@ -31,8 +31,7 @@ public class Reactor {
 	}
 	Dispatcher.selector = Selector.open();
 	new Thread(acceptor).start();
-	new Thread(eventHandler == null ? new Dispatcher() : new Dispatcher(
-		eventHandler)).start();
+	new Thread(new Dispatcher(eventHandler)).start();
 	started = true;
     }
 
@@ -45,6 +44,6 @@ public class Reactor {
      * @see {@link #start(Acceptor, EventHandler)}
      */
     public static void start(Acceptor acceptor) throws IOException {
-	start(acceptor, null);
+	start(acceptor, new EventHandler());
     }
 }

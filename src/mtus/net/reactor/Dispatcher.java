@@ -29,10 +29,6 @@ public final class Dispatcher implements Runnable {
 	this.eventHandler = eventHandler;
     }
 
-    protected Dispatcher() {
-	this(new EventHandler());
-    }
-
     /**
      * Selects keys whose channels are ready for operations. These keys are
      * iterated through and handled. The dispatcher thread does not directly
