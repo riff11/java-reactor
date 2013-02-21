@@ -12,25 +12,35 @@ import mtus.net.reactor.model.Client;
  */
 public class EventHandler {
 
+    /**
+     * 
+     * @param selectionKey
+     * @throws Exception
+     */
     public void onConnect(SelectionKey selectionKey) throws Exception {
 
     }
 
+    /**
+     * 
+     * @param selectionKey
+     * @throws Exception
+     */
     public void onRead(SelectionKey selectionKey) throws Exception {
 	SocketChannel socketChannel = (SocketChannel) selectionKey.channel();
 	Client client = (Client) selectionKey.attachment();
 	ByteBuffer readBuffer = client.getReadBuffer();
-	int amountRead;
+	int bytesRead;
 	try {
-	    amountRead = socketChannel.read(readBuffer);
+	    bytesRead = socketChannel.read(readBuffer);
 	} catch (IOException e) {
 	    e.printStackTrace();
 	    client.disconnect();
 	    return;
 	}
-	if (amountRead == 0) {
+	if (bytesRead == 0) {
 	    return;
-	} else if (amountRead == -1) {
+	} else if (bytesRead == -1) {
 	    client.disconnect();
 	    return;
 	}
@@ -46,6 +56,11 @@ public class EventHandler {
 	}
     }
 
+    /**
+     * 
+     * @param selectionKey
+     * @throws Exception
+     */
     public void onWrite(SelectionKey selectionKey) throws Exception {
 	SocketChannel socketChannel = (SocketChannel) selectionKey.channel();
 	Client client = (Client) selectionKey.attachment();
