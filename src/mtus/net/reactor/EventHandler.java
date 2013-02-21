@@ -35,10 +35,6 @@ public class EventHandler {
 	    return;
 	}
 	readBuffer.flip();
-	/*
-	 * Guarantee that the buffer is ready for the next read by preparing it
-	 * within a try-finally block.
-	 */
 	try {
 	    client.handleData();
 	} finally {
