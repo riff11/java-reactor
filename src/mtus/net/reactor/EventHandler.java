@@ -12,20 +12,10 @@ import mtus.net.reactor.model.Client;
  */
 public class EventHandler {
 
-    /**
-     * 
-     * @param selectionKey
-     * @throws Exception
-     */
     public void onConnect(SelectionKey selectionKey) throws Exception {
 
     }
 
-    /**
-     * 
-     * @param selectionKey
-     * @throws Exception
-     */
     public void onRead(SelectionKey selectionKey) throws Exception {
 	SocketChannel socketChannel = (SocketChannel) selectionKey.channel();
 	Client client = (Client) selectionKey.attachment();
@@ -45,6 +35,10 @@ public class EventHandler {
 	    return;
 	}
 	readBuffer.flip();
+	/*
+	 * Guarantee that the buffer is ready for the next read by preparing it
+	 * within a try-finally block.
+	 */
 	try {
 	    client.handleData();
 	} finally {
@@ -56,11 +50,6 @@ public class EventHandler {
 	}
     }
 
-    /**
-     * 
-     * @param selectionKey
-     * @throws Exception
-     */
     public void onWrite(SelectionKey selectionKey) throws Exception {
 	SocketChannel socketChannel = (SocketChannel) selectionKey.channel();
 	Client client = (Client) selectionKey.attachment();

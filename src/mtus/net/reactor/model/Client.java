@@ -16,28 +16,12 @@ public abstract class Client {
 	this.selectionKey = selectionKey;
     }
 
-    /**
-     * 
-     */
     public abstract void handleData();
 
-    /**
-     * 
-     * @return
-     */
     public abstract ByteBuffer getReadBuffer();
 
-    /**
-     * 
-     * @return
-     */
     public abstract ByteBuffer getWriteBuffer();
 
-    /**
-     * 
-     * @param buffer
-     * @throws IOException
-     */
     public final void write(ByteBuffer buffer) throws IOException {
 	ByteBuffer writeBuffer = getWriteBuffer();
 	if (writeBuffer.position() > 0) {
@@ -51,25 +35,14 @@ public abstract class Client {
 	}
     }
 
-    /**
-     * 
-     * @throws IOException
-     */
     public final void disconnect() throws IOException {
 	((SocketChannel) selectionKey.channel()).close();
 	selectionKey.attach(null);
 	remove();
     }
 
-    /**
-     * 
-     */
     protected abstract void remove();
 
-    /**
-     * 
-     * @return
-     */
     public final SelectionKey getSelectionKey() {
 	return selectionKey;
     }
