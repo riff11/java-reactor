@@ -43,5 +43,5 @@ public abstract class Acceptor implements Runnable {
 	serverSocketChannel.close();
     }
 
-    public abstract Client createClient(SelectionKey selectionKey);
+    protected abstract Client createClient(SelectionKey selectionKey);
 }
