@@ -15,34 +15,32 @@ import java.util.concurrent.Executors;
 public final class Dispatcher implements Runnable {
 
     /**
-     * The thread pool is a fixed thread pool with the number of threads set as
+     * This thread pool is a fixed thread pool with the number of threads set as
      * the number of available processors.
      */
-    private static final ExecutorService threadPool = Executors
+    private static final ExecutorService workerPool = Executors
 	    .newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
     private static final Object guardLock = new Object();
-    private static Selector selector;
+    protected static Selector selector;
     private final EventHandler eventHandler;
 
-    /**
-     * Creates a new dispatcher using the provided event handler.
-     * 
-     * @param eventHandler
-     */
-    public Dispatcher(EventHandler eventHandler) {
+    protected Dispatcher(EventHandler eventHandler) {
 	this.eventHandler = eventHandler;
     }
 
-    /**
-     * Creates a new dispatcher using a standard event handler.
-     */
-    public Dispatcher() {
+    protected Dispatcher() {
 	this(new EventHandler());
     }
 
     /**
-     * 
+     * Selects keys whose channels are ready for operations. These keys are
+     * iterated through and handled. The dispatcher thread does not directly
+     * handle the keys, instead, once it ensures that the key is valid, it
+     * dispatches a {@code Runnable} object to the worker thread pool. This
+     * Runnable object handles the operations that the key's channel is ready
+     * for. How the operations are handled depend on the implementation of the
+     * {@code EventHandler} class with which this class was initialized.
      */
     public void run() {
 	int amountSelected;
@@ -66,7 +64,7 @@ public final class Dispatcher implements Runnable {
 		if (!selectionKey.isValid()) {
 		    continue;
 		}
-		threadPool.execute(new Runnable() {
+		workerPool.execute(new Runnable() {
 		    public void run() {
 			try {
 			    if (selectionKey.isConnectable()) {
@@ -100,7 +98,8 @@ public final class Dispatcher implements Runnable {
      * threads are accounted for in the upcoming select because acquiring the
      * lock forces the dispatcher to wait until all of the registrations have
      * finished. The selector is awakened by this registration operation to
-     * ensure that the channel is incorporated as soon as possible.
+     * ensure that the channel is incorporated in the key set as soon as
+     * possible.
      * 
      * @param selectableChannel
      * @param operation
