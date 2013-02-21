@@ -15,13 +15,6 @@ public abstract class Acceptor implements Runnable {
 
     private final ServerSocketChannel serverSocketChannel;
 
-    /**
-     * Creates a new acceptor. The provided port number is the port from which
-     * clients will be accepted.
-     * 
-     * @param port
-     * @throws IOException
-     */
     public Acceptor(int port) throws IOException {
 	ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
 	serverSocketChannel.configureBlocking(true);
@@ -41,7 +34,7 @@ public abstract class Acceptor implements Runnable {
      * usage.
      */
     public final void run() {
-	while (true) {
+	while (serverSocketChannel.isOpen()) {
 	    try {
 		SocketChannel socketChannel = serverSocketChannel.accept();
 		if (socketChannel == null) {
@@ -58,6 +51,25 @@ public abstract class Acceptor implements Runnable {
     }
 
     /**
+     * Stops the acceptor thread by closing the {@code ServerSocketChannel} from
+     * which connections are accepted. The acceptor thread runs for as long as
+     * the channel is open, so by closing the channel, the thread is nicely
+     * stopped.
+     * 
+     * @throws IOException
+     */
+    public final void stop() throws IOException {
+	serverSocketChannel.close();
+    }
+
+    /**
+     * Creates a representation of a client. When a connection is accepted, a
+     * {@code Client} object is created and attached to the {@code SelectionKey}
+     * which was created as a result of registering the channel with the
+     * selector. The Client class is {@code abstract}, and as a result, it
+     * cannot be directly created. Implementations of this class are required to
+     * create an instance of their own Client class implementation and return
+     * that instance here.
      * 
      * @param selectionKey
      * @return
