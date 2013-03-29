@@ -27,7 +27,7 @@ public abstract class Client {
 	if (writeBuffer.position() > 0) {
 	    writeBuffer.put(buffer);
 	} else {
-	    ((SocketChannel) selectionKey.channel()).write(buffer);
+	    getSocketChannel().write(buffer);
 	    if (buffer.hasRemaining()) {
 		writeBuffer.put(buffer);
 		selectionKey.interestOps(SelectionKey.OP_WRITE);
@@ -36,12 +36,16 @@ public abstract class Client {
     }
 
     public final void disconnect() throws IOException {
-	((SocketChannel) selectionKey.channel()).close();
+	getSocketChannel().close();
 	selectionKey.attach(null);
 	remove();
     }
 
     protected abstract void remove();
+
+    public final SocketChannel getSocketChannel() {
+	return (SocketChannel) selectionKey.channel();
+    }
 
     public final SelectionKey getSelectionKey() {
 	return selectionKey;
