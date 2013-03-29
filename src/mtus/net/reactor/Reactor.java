@@ -13,7 +13,7 @@ public class Reactor {
     public static void start(Acceptor acceptor, EventHandler eventHandler)
 	    throws IOException {
 	if (started) {
-	    throw new IllegalStateException("The reactor is already started!");
+	    throw new IllegalStateException("The reactor has already started!");
 	}
 	Dispatcher.selector = Selector.open();
 	new Thread(acceptor).start();
